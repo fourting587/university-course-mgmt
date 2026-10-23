@@ -56,7 +56,7 @@ CREATE DATABASE IF NOT EXISTS course_mgmt CHARACTER SET utf8mb4 COLLATE utf8mb4_
 
 2. 执行初始化脚本：
    - `src/main/resources/db/schema-mysql.sql`（应用启动时会自动执行，幂等；新建库会带上外键约束）
-   - `src/main/resources/db/data-mysql.sql`（**完整数据快照**：先 `TRUNCATE` 再写入 8 个班、240 名学生、约 3 万条成绩记录；只需执行一次，重复执行会重置为快照数据）
+   - `src/main/resources/db/data-mysql.sql`（**完整数据快照**：先 `TRUNCATE` 再写入 8 个班、240 名学生、16 教学周的考勤/表现/实验/作业/期末记录（约 6.5 万条）；只需执行一次，重复执行会重置为快照数据）
    - 已有旧库升级：执行一次 `src/main/resources/db/migration-fk.sql` 补外键（重复执行会提示约束已存在，可忽略）
 
 3. 确认 `src/main/resources/application.yml` 中的 MySQL 连接参数正确：

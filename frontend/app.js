@@ -7,6 +7,12 @@ const fmt = (v) => {
   const s = String(v);
   return s.includes('T') ? s.replace('T', ' ').slice(0, 19) : s;
 };
+// 日期字段（DATE）在 Jackson 里会带 00:00:00，这里只显示年月日
+const fmtDate = (v) => {
+  if (v === null || v === undefined || v === '') return '-';
+  const s = String(v);
+  return s.includes('T00:00:00') ? s.slice(0, 10) : fmt(s);
+};
 const esc = (v) => String(v === null || v === undefined ? '' : v)
   .replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const roleLabel = (r) => ({ ADMIN: '管理员', TEACHER: '教师', STUDENT: '学生' }[r] || r);
@@ -194,7 +200,7 @@ async function renderAttendance() {
   const f = attendanceFilter;
   const data = await API.get(`/attendance?courseId=${f.courseId || ''}&clazzId=${f.clazzId || ''}&page=${f.page}`);
   const rows = data.rows.map((r) => [
-    fmt(r.attendDate), esc(r.studentNo), esc(r.studentName), esc(r.className), esc(r.courseName), esc(r.status), esc(r.remark),
+    fmtDate(r.attendDate), esc(r.studentNo), esc(r.studentName), esc(r.className), esc(r.courseName), esc(r.status), esc(r.remark),
   ]);
 
   mount('考勤查询', `
@@ -222,7 +228,7 @@ async function renderPerformance() {
   const courses = await API.get('/courses');
   const f = performanceFilter;
   const data = await API.get(`/performance?courseId=${f.courseId || ''}&page=${f.page}`);
-  const rows = data.rows.map((r) => [fmt(r.recordDate), esc(r.studentNo), esc(r.studentName), esc(r.courseName), r.score, esc(r.comment)]);
+  const rows = data.rows.map((r) => [fmtDate(r.recordDate), esc(r.studentNo), esc(r.studentName), esc(r.courseName), r.score, esc(r.comment)]);
   mount('课堂表现', `
     <div class="card">
       <div class="filters"><label>课程<select id="courseSel"><option value="">全部</option>${courses.map((c) => `<option value="${c.id}" ${String(c.id) === String(f.courseId) ? 'selected' : ''}>${esc(c.courseName)}</option>`).join('')}</select></label></div>
