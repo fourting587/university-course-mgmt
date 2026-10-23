@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+  <meta charset="UTF-8"/>
+  <title th:text="${title}">大学智能课程管理系统</title>
+  <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body>
+<!-- 只有标题、没有操作按钮的页面直接用这个 topbar -->
+<div th:fragment="topbar(title)" class="topbar"><h1 th:text="${title}">标题</h1></div>
+</body>
+</html>

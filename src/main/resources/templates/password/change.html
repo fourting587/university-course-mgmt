@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head th:replace="~{fragments/common :: head('修改密码 - 大学智能课程管理系统')}"></head>
+<body>
+<div class="login-wrap">
+  <div class="login-card">
+    <h1>修改密码</h1>
+    <p class="sub" th:if="${forced}">你正在使用系统默认密码，请先设置新密码，修改后才能进入系统。</p>
+    <p class="sub" th:unless="${forced}">定期更换密码可以提高账号安全性。</p>
+
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <form th:action="@{/password/change}" method="post">
+      <div class="field">
+        <label>新密码</label>
+        <input type="password" name="newPassword" required minlength="6" maxlength="50"
+               placeholder="至少 6 位，不能与默认密码相同" autofocus/>
+      </div>
+      <div class="field">
+        <label>确认新密码</label>
+        <input type="password" name="confirmPassword" required minlength="6" maxlength="50"
+               placeholder="请再次输入新密码"/>
+      </div>
+      <button type="submit">确认修改</button>
+    </form>
+
+    <div class="hint">
+      当前账号：<span th:text="${user.username}">user</span><br/>
+      <a th:href="@{/logout}">退出登录</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

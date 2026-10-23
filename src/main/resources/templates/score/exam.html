@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head th:replace="~{fragments/common :: head('期末成绩')}"></head>
+<body>
+<div class="layout">
+  <div th:replace="~{fragments/layout :: sidebar(user=${user})}"></div>
+  <div class="main">
+    <div th:replace="~{fragments/common :: topbar('期末成绩录入')}"></div>
+    <div class="card">
+      <form th:action="@{/teach/exam/save}" method="post" class="form-row">
+        <label>课程<select name="courseId" required>
+          <option th:each="c:${courses}" th:value="${c.id}" th:text="${c.courseName}"></option></select></label>
+        <label>学生<select name="studentId" required>
+          <option th:each="s:${students}" th:value="${s.id}" th:text="${s.studentNo+' - '+s.name}"></option></select></label>
+        <label>成绩<input type="number" name="score" min="0" max="100" step="0.01" required/></label>
+        <label>考试日期<input type="date" name="examDate"/></label>
+        <button type="submit">保存</button>
+      </form>
+      <table class="data" style="margin-top:14px;">
+        <thead><tr><th>学号</th><th>姓名</th><th>课程</th><th>成绩</th><th>日期</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="e:${list}">
+          <td th:text="${e.studentNo}"></td><td th:text="${e.studentName}"></td>
+          <td th:text="${e.courseName}"></td><td th:text="${e.score}"></td>
+          <td th:text="${e.examDate != null ? #dates.format(e.examDate,'yyyy-MM-dd') : '-'}"></td>
+          <td>
+            <form th:action="@{/teach/exam/delete/{id}(id=${e.id})}" method="post" style="display:inline"
+                  onsubmit="return confirm('确认删除？')">
+              <button type="submit" class="btn btn-sm btn-danger">删除</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+</body>
+</html>

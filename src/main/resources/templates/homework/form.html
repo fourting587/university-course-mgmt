@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head th:replace="~{fragments/common :: head('作业管理')}"></head>
+<body>
+<div class="layout">
+  <div th:replace="~{fragments/layout :: sidebar(user=${user})}"></div>
+  <div class="main">
+    <div class="topbar"><h1>作业管理</h1><a class="btn btn-secondary" th:href="@{/homework}">返回查询</a></div>
+    <div class="card">
+      <h2>发布作业</h2>
+      <form th:action="@{/teach/homework/save}" method="post" class="form-row">
+        <label>课程<select name="courseId" required>
+          <option th:each="c:${courses}" th:value="${c.id}" th:text="${c.courseName}"></option></select></label>
+        <label>标题<input name="title" required/></label>
+        <label>满分<input type="number" name="fullScore" value="100" step="0.01"/></label>
+        <label>截止日期<input type="date" name="dueDate"/></label>
+        <button type="submit">发布</button>
+      </form>
+      <table class="data" style="margin-top:12px;">
+        <thead><tr><th>ID</th><th>课程</th><th>标题</th><th>满分</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="h:${homeworks}">
+          <td th:text="${h.id}"></td><td th:text="${h.courseName}"></td><td th:text="${h.title}"></td>
+          <td th:text="${h.fullScore}"></td>
+          <td>
+            <form th:action="@{/teach/homework/delete/{id}(id=${h.id})}" method="post" style="display:inline"
+                  onsubmit="return confirm('确认删除？')">
+              <button type="submit" class="btn btn-sm btn-danger">删除</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h2>批改 / 录入作业成绩</h2>
+      <form th:action="@{/teach/homework/record}" method="post" class="form-row">
+        <label>作业<select name="homeworkId" required>
+          <option th:each="h:${homeworks}" th:value="${h.id}" th:text="${h.title}"></option></select></label>
+        <label>学生<select name="studentId" required>
+          <option th:each="s:${students}" th:value="${s.id}" th:text="${s.studentNo+' - '+s.name}"></option></select></label>
+        <label>状态<select name="status">
+          <option value="SUBMITTED">已提交</option>
+          <option value="GRADED">已批改</option>
+          <option value="PENDING">未交</option>
+        </select></label>
+        <label>得分<input type="number" name="score" min="0" max="100" step="0.01"/></label>
+        <label>备注<input name="remark"/></label>
+        <button type="submit">保存</button>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>

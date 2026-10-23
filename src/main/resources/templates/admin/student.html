@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head th:replace="~{fragments/common :: head('学生管理')}"></head>
+<body>
+<div class="layout">
+  <div th:replace="~{fragments/layout :: sidebar(user=${user})}"></div>
+  <div class="main">
+    <div th:replace="~{fragments/common :: topbar('学生基础信息')}"></div>
+    <div th:if="${param.msg != null and param.msg[0] == 'pwdReset'}" class="alert alert-ok">
+      密码已重置为默认密码 123456，该学生下次登录需重新设置密码。
+    </div>
+    <div th:if="${param.msg != null and param.msg[0] == 'toggled'}" class="alert alert-ok">
+      账号状态已切换（禁用后该学生无法登录）。
+    </div>
+    <div class="card">
+      <form method="get" th:action="@{/admin/student}" class="form-row">
+        <label>关键字<input name="keyword" th:value="${keyword}" placeholder="学号/姓名"/></label>
+        <label>班级<select name="clazzId"><option value="">全部</option>
+          <option th:each="cl:${clazzList}" th:value="${cl.id}" th:text="${cl.className}" th:selected="${clazzId==cl.id}"></option>
+        </select></label>
+        <button type="submit">查询</button>
+      </form>
+      <form th:action="@{/admin/student/save}" method="post" class="form-row" id="studentForm">
+        <input type="hidden" name="id" id="studentId"/>
+        <label>学号<input name="studentNo" id="studentNo" required/></label>
+        <label>姓名<input name="name" id="studentName" required/></label>
+        <label>性别<select name="gender" id="studentGender"><option>男</option><option>女</option></select></label>
+        <label>班级<select name="clazzId" id="studentClazzId" required>
+          <option th:each="cl:${clazzList}" th:value="${cl.id}" th:text="${cl.className}"></option></select></label>
+        <label>电话<input name="phone" id="studentPhone"/></label>
+        <label>邮箱<input name="email" id="studentEmail"/></label>
+        <button type="submit">保存</button>
+      </form>
+      <table class="data">
+        <thead><tr><th>学号</th><th>姓名</th><th>性别</th><th>班级</th><th>电话</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="s:${list}">
+          <td th:text="${s.studentNo}"></td><td th:text="${s.name}"></td><td th:text="${s.gender}"></td>
+          <td th:text="${s.className}"></td><td th:text="${s.phone}"></td>
+          <td>
+            <button type="button" class="btn btn-sm btn-edit"
+                    th:attr="data-id=${s.id},data-studentno=${s.studentNo},data-name=${s.name},data-gender=${s.gender},data-clazzid=${s.clazzId},data-phone=${s.phone},data-email=${s.email}"
+                    onclick="editStudent(this)">编辑</button>
+            <form th:action="@{/admin/student/reset/{id}(id=${s.id})}" method="post" style="display:inline"
+                  onsubmit="return confirm('确认把该学生密码重置为默认密码 123456？')">
+              <button type="submit" class="btn btn-sm">重置密码</button>
+            </form>
+            <form th:action="@{/admin/student/toggle/{id}(id=${s.id})}" method="post" style="display:inline">
+              <button type="submit" class="btn btn-sm">启用/禁用</button>
+            </form>
+            <form th:action="@{/admin/student/delete/{id}(id=${s.id})}" method="post" style="display:inline"
+                  onsubmit="return confirm('确认删除？')">
+              <button type="submit" class="btn btn-sm btn-danger">删除</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <div class="pager" th:if="${totalPages != null and totalPages > 1}">
+        <a th:if="${page > 1}" th:href="@{/admin/student(keyword=${keyword},clazzId=${clazzId},page=${page-1})}">上一页</a>
+        <span th:text="|第 ${page} / ${totalPages} 页，共 ${totalRows} 条|"></span>
+        <a th:if="${page < totalPages}" th:href="@{/admin/student(keyword=${keyword},clazzId=${clazzId},page=${page+1})}">下一页</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function editStudent(btn) {
+  var d = btn.dataset;
+  document.getElementById('studentId').value = d.id;
+  document.getElementById('studentNo').value = d.studentno || '';
+  document.getElementById('studentName').value = d.name || '';
+  document.getElementById('studentGender').value = d.gender || '男';
+  document.getElementById('studentClazzId').value = d.clazzid || '';
+  document.getElementById('studentPhone').value = d.phone || '';
+  document.getElementById('studentEmail').value = d.email || '';
+  document.getElementById('studentForm').scrollIntoView({behavior: 'smooth'});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head th:replace="~{fragments/common :: head(${type=='total'?'总成绩汇总':'平时成绩汇总'})}"></head>
+<body>
+<div class="layout">
+  <div th:replace="~{fragments/layout :: sidebar(user=${user})}"></div>
+  <div class="main">
+    <div th:replace="~{fragments/common :: topbar(${type=='total'?'总成绩汇总':'平时成绩汇总'})}"></div>
+    <div class="card">
+      <form method="get" class="form-row">
+        <label>课程<select name="courseId" required>
+          <option value="">请选择</option>
+          <option th:each="c:${courses}" th:value="${c.id}" th:text="${c.courseName}" th:selected="${courseId==c.id}"></option>
+        </select></label>
+        <label th:if="${!user.student}">班级<select name="clazzId">
+          <option value="">全部班级</option>
+          <option th:each="cl:${clazzList}" th:value="${cl.id}" th:text="${cl.className}" th:selected="${clazzId==cl.id}"></option>
+        </select></label>
+        <button type="submit">生成报表</button>
+      </form>
+      <div th:if="${rows != null}">
+        <div style="text-align:right;margin-bottom:8px;">
+          <a class="btn" th:href="@{/score/export(courseId=${courseId},clazzId=${clazzId},type=${type})}">导出 Excel（CSV）</a>
+        </div>
+        <table class="data">
+          <thead>
+          <tr>
+            <th>学号</th><th>姓名</th><th>班级</th>
+            <th>考勤分</th><th>表现分</th><th>实验分</th><th>作业分</th>
+            <th>平时成绩</th>
+            <th th:if="${type=='total'}">期末成绩</th>
+            <th th:if="${type=='total'}">总成绩</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="r:${rows}">
+            <td th:text="${r.studentNo}"></td>
+            <td th:text="${r.studentName}"></td>
+            <td th:text="${r.className}"></td>
+            <td th:text="${r.attendanceScore}"></td>
+            <td th:text="${r.performanceScore}"></td>
+            <td th:text="${r.experimentScore}"></td>
+            <td th:text="${r.homeworkScore}"></td>
+            <td th:text="${r.regularScore}"></td>
+            <td th:if="${type=='total'}" th:text="${r.examScore}"></td>
+            <td th:if="${type=='total'}" th:text="${r.totalScore}"></td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="pager" th:if="${totalPages != null and totalPages > 1}">
+          <a th:if="${page > 1}" th:href="@{/score/{t}(t=${type},courseId=${courseId},clazzId=${clazzId},page=${page-1})}">上一页</a>
+          <span th:text="|第 ${page} / ${totalPages} 页，共 ${totalRows} 条|"></span>
+          <a th:if="${page < totalPages}" th:href="@{/score/{t}(t=${type},courseId=${courseId},clazzId=${clazzId},page=${page+1})}">下一页</a>
+        </div>
+        <p style="font-size:12px;color:#64748b;margin-top:10px;">
+          说明：平时成绩按评价规则权重加权；总成绩 = 平时×平时占比 + 期末×期末占比。考勤折算：到课100 / 迟到80 / 请假60 / 缺勤0。
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

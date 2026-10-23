@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head th:replace="~{fragments/common :: head('班级管理')}"></head>
+<body>
+<div class="layout">
+  <div th:replace="~{fragments/layout :: sidebar(user=${user})}"></div>
+  <div class="main">
+    <div th:replace="~{fragments/common :: topbar('班级管理')}"></div>
+    <div th:if="${param.error != null and param.error[0] == 'hasStudents'}" class="alert alert-error">
+      该班级下还有学生，不能直接删除。请先把学生转到其他班级或删除学生。
+    </div>
+    <div class="card">
+      <form th:action="@{/admin/clazz/save}" method="post" class="form-row" id="clazzForm">
+        <input type="hidden" name="id" id="clazzId"/>
+        <label>班级编号<input name="classNo" id="clazzNo" required/></label>
+        <label>班级名称<input name="className" id="clazzName" required/></label>
+        <label>年级<input name="grade" id="clazzGrade" required/></label>
+        <label>专业<input name="major" id="clazzMajor" required/></label>
+        <button type="submit">保存</button>
+      </form>
+      <table class="data">
+        <thead><tr><th>编号</th><th>名称</th><th>年级</th><th>专业</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="c:${list}">
+          <td th:text="${c.classNo}"></td><td th:text="${c.className}"></td>
+          <td th:text="${c.grade}"></td><td th:text="${c.major}"></td>
+          <td>
+            <button type="button" class="btn btn-sm btn-edit"
+                    th:attr="data-id=${c.id},data-classno=${c.classNo},data-classname=${c.className},data-grade=${c.grade},data-major=${c.major}"
+                    onclick="editClazz(this)">编辑</button>
+            <form th:action="@{/admin/clazz/delete/{id}(id=${c.id})}" method="post" style="display:inline"
+                  onsubmit="return confirm('确认删除？')">
+              <button type="submit" class="btn btn-sm btn-danger">删除</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+function editClazz(btn) {
+  var d = btn.dataset;
+  document.getElementById('clazzId').value = d.id;
+  document.getElementById('clazzNo').value = d.classno || '';
+  document.getElementById('clazzName').value = d.classname || '';
+  document.getElementById('clazzGrade').value = d.grade || '';
+  document.getElementById('clazzMajor').value = d.major || '';
+  document.getElementById('clazzForm').scrollIntoView({behavior: 'smooth'});
+}
+</script>
+</body>
+</html>

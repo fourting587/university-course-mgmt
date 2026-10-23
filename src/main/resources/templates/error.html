@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head th:replace="~{fragments/common :: head('出错了 - 大学智能课程管理系统')}"></head>
+<body>
+<div class="login-wrap">
+  <div class="login-card">
+    <h1>出错了</h1>
+    <p class="sub" th:text="|${status} ${error}|">500</p>
+    <p th:if="${message != null and !#strings.isEmpty(message)}" th:text="${message}"></p>
+    <p class="hint">如果问题持续出现，请联系管理员。</p>
+    <p>
+      <a class="btn" th:href="@{/home}">返回工作台</a>
+      <a class="btn btn-secondary" th:href="@{/logout}">退出登录</a>
+    </p>
+  </div>
+</div>
+</body>
+</html>

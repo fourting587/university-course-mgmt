@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="sidebar(user)">
+<aside class="sidebar">
+  <div class="brand-wrap">
+    <div class="brand-mark">URP</div>
+    <div class="brand-text">
+      <strong>大学智能</strong>
+      <span>课程管理系统</span>
+    </div>
+  </div>
+
+  <nav>
+    <div class="section">常用入口</div>
+    <a th:href="@{/home}">工作台</a>
+    <a th:href="@{/attendance}">考勤查询</a>
+    <a th:href="@{/performance}">课堂表现</a>
+    <a th:href="@{/experiment}">实验完成度</a>
+    <a th:href="@{/homework}">作业情况</a>
+    <a th:href="@{/score/regular}">平时成绩汇总</a>
+    <a th:href="@{/score/total}">总成绩汇总</a>
+
+    <th:block th:if="${user != null and (user.getTeacher() or user.getAdmin())}">
+      <div class="section">教学录入</div>
+      <a th:href="@{/teach/attendance}">考勤录入</a>
+      <a th:href="@{/teach/performance}">表现录入</a>
+      <a th:href="@{/teach/experiment}">实验管理</a>
+      <a th:href="@{/teach/homework}">作业管理</a>
+      <a th:href="@{/teach/exam}">期末成绩</a>
+    </th:block>
+
+    <th:block th:if="${user != null and user.getAdmin()}">
+      <div class="section">基础数据</div>
+      <a th:href="@{/admin/clazz}">班级管理</a>
+      <a th:href="@{/admin/teacher}">教师管理</a>
+      <a th:href="@{/admin/student}">学生管理</a>
+      <a th:href="@{/admin/course}">课程管理</a>
+      <a th:href="@{/admin/rule}">评价规则</a>
+      <a th:href="@{/admin/audit}">操作日志</a>
+    </th:block>
+
+    <div class="section">账户</div>
+    <a th:href="@{/logout}">退出登录</a>
+  </nav>
+</aside>
+</th:block>
+</body>
+</html>

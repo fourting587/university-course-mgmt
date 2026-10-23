@@ -1,0 +1,44 @@
+server:
+  port: 1001
+  error:
+    include-message: always
+  servlet:
+    context-path: /
+    session:
+      timeout: 60m
+
+spring:
+  profiles:
+    active: mysql
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/course_mgmt?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
+    username: root
+    password: 123456
+  sql:
+    init:
+      # 每次启动只执行建表脚本（CREATE TABLE IF NOT EXISTS 幂等）；
+      # 演示数据请按 README 手动执行一次 db/data-mysql.sql，避免每次重启重复插入。
+      mode: always
+      encoding: UTF-8
+      schema-locations: classpath:db/schema-mysql.sql
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  messages:
+    encoding: UTF-8
+
+mybatis:
+  type-aliases-package: com.university.cms.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    com.university.cms: debug

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head th:replace="~{fragments/common :: head('工作台')}"></head>
+<body>
+<div class="layout">
+  <div th:replace="~{fragments/layout :: sidebar(user=${user})}"></div>
+  <div class="main">
+    <div class="topbar topbar-portal">
+      <div>
+        <div class="crumb">首页 / 工作台</div>
+        <h1>校园教学工作台</h1>
+      </div>
+      <div th:if="${user != null and user.realName != null and !#strings.isEmpty(user.realName)}" class="user-chip">
+        <span class="avatar" th:text="${#strings.substring(user.realName, 0, 1)}">U</span>
+        <div>
+          <strong th:text="${user.realName}">用户</strong>
+          <small th:text="${user.roleCode}">ROLE</small>
+        </div>
+      </div>
+    </div>
+
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+    <div th:if="${param.msg != null and param.msg[0] == 'pwdChanged'}" class="alert alert-ok">
+      密码修改成功，下次请使用新密码登录。
+    </div>
+
+    <div class="portal-hero card">
+      <div>
+        <span class="label-title">大学智能课程管理系统</span>
+        <h2>欢迎使用教学管理与服务平台</h2>
+        <p>技术栈：Java + Spring Boot + Thymeleaf + MyBatis + MySQL。请从左侧导航进入教学、成绩、班级以及课程管理模块。</p>
+      </div>
+      <div class="hero-metrics">
+        <div>
+          <strong>24</strong>
+          <span>本周课程</span>
+        </div>
+        <div>
+          <strong>12</strong>
+          <span>待处理事项</span>
+        </div>
+        <div>
+          <strong>96%</strong>
+          <span>教学执行率</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tiles">
+      <a class="tile" th:href="@{/attendance}"><strong>考勤模块</strong><span>查询 / 录入考勤状态</span></a>
+      <a class="tile" th:href="@{/performance}"><strong>课堂表现</strong><span>表现评分与评语</span></a>
+      <a class="tile" th:href="@{/experiment}"><strong>实验完成度</strong><span>实验任务与结果</span></a>
+      <a class="tile" th:href="@{/homework}"><strong>作业情况</strong><span>作业提交与批改</span></a>
+      <a class="tile" th:href="@{/score/regular}"><strong>平时成绩</strong><span>按权重统计平时分</span></a>
+      <a class="tile" th:href="@{/score/total}"><strong>总成绩汇总</strong><span>平时 + 期末综合</span></a>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="card panel">
+        <div class="panel-header">
+          <h3>今日待办</h3>
+          <span class="status-pill ok">已安排</span>
+        </div>
+        <ul class="list-simple">
+          <li>高等数学 · 09:00-10:30 · 1号教学楼</li>
+          <li>大学英语 · 14:00-15:30 · 3号教学楼</li>
+          <li>通信原理 · 16:00-17:30 · 2号实验楼</li>
+        </ul>
+      </div>
+
+      <div class="card panel">
+        <div class="panel-header">
+          <h3>快速入口</h3>
+          <span class="status-pill">常用</span>
+        </div>
+        <div class="quick-links">
+          <a th:href="@{/admin/course}">课程管理</a>
+          <a th:href="@{/teach/attendance}">考勤录入</a>
+          <a th:href="@{/teach/exam}">期末成绩</a>
+          <a th:href="@{/admin/rule}">评价规则</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

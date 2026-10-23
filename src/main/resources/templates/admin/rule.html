@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head th:replace="~{fragments/common :: head('考核评价规则')}"></head>
+<body>
+<div class="layout">
+  <div th:replace="~{fragments/layout :: sidebar(user=${user})}"></div>
+  <div class="main">
+    <div th:replace="~{fragments/common :: topbar('考核评价规则')}"></div>
+    <div class="card">
+      <p style="font-size:13px;color:#64748b;">平时分项权重之和建议为100；平时占比+期末占比=100。</p>
+      <form th:action="@{/admin/rule/save}" method="post" class="form-row" id="ruleForm">
+        <input type="hidden" name="id" id="ruleId"/>
+        <label>课程<select name="courseId" id="ruleCourseId" required>
+          <option th:each="c:${courses}" th:value="${c.id}" th:text="${c.courseName}"></option></select></label>
+        <label>考勤权重<input type="number" name="attendanceWeight" id="ruleAttendanceWeight" value="20" step="0.01"/></label>
+        <label>表现权重<input type="number" name="performanceWeight" id="rulePerformanceWeight" value="20" step="0.01"/></label>
+        <label>实验权重<input type="number" name="experimentWeight" id="ruleExperimentWeight" value="30" step="0.01"/></label>
+        <label>作业权重<input type="number" name="homeworkWeight" id="ruleHomeworkWeight" value="30" step="0.01"/></label>
+        <label>平时占总成绩%<input type="number" name="regularRatio" id="ruleRegularRatio" value="40" step="0.01"/></label>
+        <label>期末占总成绩%<input type="number" name="examRatio" id="ruleExamRatio" value="60" step="0.01"/></label>
+        <button type="submit">保存规则</button>
+      </form>
+      <table class="data">
+        <thead><tr><th>课程</th><th>考勤</th><th>表现</th><th>实验</th><th>作业</th><th>平时%</th><th>期末%</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="r:${list}">
+          <td th:text="${r.courseName}"></td>
+          <td th:text="${r.attendanceWeight}"></td><td th:text="${r.performanceWeight}"></td>
+          <td th:text="${r.experimentWeight}"></td><td th:text="${r.homeworkWeight}"></td>
+          <td th:text="${r.regularRatio}"></td><td th:text="${r.examRatio}"></td>
+          <td>
+            <button type="button" class="btn btn-sm btn-edit"
+                    th:attr="data-id=${r.id},data-courseid=${r.courseId},data-attendanceweight=${r.attendanceWeight},data-performanceweight=${r.performanceWeight},data-experimentweight=${r.experimentWeight},data-homeworkweight=${r.homeworkWeight},data-regularratio=${r.regularRatio},data-examratio=${r.examRatio}"
+                    onclick="editRule(this)">编辑</button>
+            <form th:action="@{/admin/rule/delete/{id}(id=${r.id})}" method="post" style="display:inline"
+                  onsubmit="return confirm('确认删除？')">
+              <button type="submit" class="btn btn-sm btn-danger">删除</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+function editRule(btn) {
+  var d = btn.dataset;
+  document.getElementById('ruleId').value = d.id;
+  document.getElementById('ruleCourseId').value = d.courseid || '';
+  document.getElementById('ruleAttendanceWeight').value = d.attendanceweight || '';
+  document.getElementById('rulePerformanceWeight').value = d.performanceweight || '';
+  document.getElementById('ruleExperimentWeight').value = d.experimentweight || '';
+  document.getElementById('ruleHomeworkWeight').value = d.homeworkweight || '';
+  document.getElementById('ruleRegularRatio').value = d.regularratio || '';
+  document.getElementById('ruleExamRatio').value = d.examratio || '';
+  document.getElementById('ruleForm').scrollIntoView({behavior: 'smooth'});
+}
+</script>
+</body>
+</html>

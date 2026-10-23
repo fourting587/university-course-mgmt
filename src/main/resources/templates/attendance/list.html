@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head th:replace="~{fragments/common :: head('考勤查询')}"></head>
+<body>
+<div class="layout">
+  <div th:replace="~{fragments/layout :: sidebar(user=${user})}"></div>
+  <div class="main">
+    <div class="topbar"><h1>考勤查询</h1>
+      <a th:if="${user.teacher or user.admin}" class="btn" th:href="@{/teach/attendance}">录入考勤</a>
+    </div>
+    <div th:if="${param.error != null and param.error[0] == 'duplicate'}" class="alert alert-error">
+      该学生当天该课程已有考勤记录，不能重复录入。
+    </div>
+    <div th:if="${param.ok != null}" class="alert alert-ok"
+         th:text="|批量录入完成：成功 ${param.ok[0]} 条，跳过 ${param.skip != null ? param.skip[0] : '0'} 条（重复日期或状态非法）|">
+    </div>
+    <div class="card">
+      <form method="get" th:action="@{/attendance}" class="form-row">
+        <label>课程
+          <select name="courseId">
+            <option value="">全部</option>
+            <option th:each="c : ${courses}" th:value="${c.id}" th:text="${c.courseName}"
+                    th:selected="${courseId != null and courseId == c.id}"></option>
+          </select>
+        </label>
+        <label th:if="${!user.student}">班级
+          <select name="clazzId">
+            <option value="">全部</option>
+            <option th:each="cl : ${clazzList}" th:value="${cl.id}" th:text="${cl.className}"
+                    th:selected="${clazzId != null and clazzId == cl.id}"></option>
+          </select>
+        </label>
+        <label>学期
+          <input type="text" name="semester" th:value="${semester}" placeholder="如 2025-2026-1"/>
+        </label>
+        <button type="submit">查询</button>
+      </form>
+      <table class="data">
+        <thead>
+        <tr>
+          <th>日期</th><th>学号</th><th>姓名</th><th>班级</th><th>课程</th><th>状态</th><th>备注</th>
+          <th th:if="${user.teacher or user.admin}">操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="a : ${list}">
+          <td th:text="${#dates.format(a.attendDate,'yyyy-MM-dd')}"></td>
+          <td th:text="${a.studentNo}"></td>
+          <td th:text="${a.studentName}"></td>
+          <td th:text="${a.className}"></td>
+          <td th:text="${a.courseName}"></td>
+          <td th:text="${a.status}"></td>
+          <td th:text="${a.remark}"></td>
+          <td th:if="${user.teacher or user.admin}">
+            <form th:action="@{/teach/attendance/delete/{id}(id=${a.id})}" method="post" style="display:inline"
+                  onsubmit="return confirm('确认删除？')">
+              <button type="submit" class="btn btn-sm btn-danger">删除</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <div class="pager" th:if="${totalPages != null and totalPages > 1}">
+        <a th:if="${page > 1}" th:href="@{/attendance(courseId=${courseId},clazzId=${clazzId},semester=${semester},page=${page-1})}">上一页</a>
+        <span th:text="|第 ${page} / ${totalPages} 页，共 ${totalRows} 条|"></span>
+        <a th:if="${page < totalPages}" th:href="@{/attendance(courseId=${courseId},clazzId=${clazzId},semester=${semester},page=${page+1})}">下一页</a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

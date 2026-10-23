@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head th:replace="~{fragments/common :: head('考勤录入')}"></head>
+<body>
+<div class="layout">
+  <div th:replace="~{fragments/layout :: sidebar(user=${user})}"></div>
+  <div class="main">
+    <div class="topbar"><h1>考勤录入</h1><a class="btn btn-secondary" th:href="@{/attendance}">返回列表</a></div>
+    <div class="card">
+      <h2>单条录入</h2>
+      <form th:action="@{/teach/attendance/save}" method="post" class="form-row">
+        <label>课程
+          <select name="courseId" required>
+            <option th:each="c : ${courses}" th:value="${c.id}" th:text="${c.courseName}"></option>
+          </select>
+        </label>
+        <label>学生
+          <select name="studentId" required>
+            <option th:each="s : ${students}" th:value="${s.id}"
+                    th:text="${s.studentNo + ' - ' + s.name}"></option>
+          </select>
+        </label>
+        <label>日期 <input type="date" name="attendDate" required/></label>
+        <label>状态
+          <select name="status">
+            <option value="PRESENT">到课</option>
+            <option value="LATE">迟到</option>
+            <option value="LEAVE">请假</option>
+            <option value="ABSENT">缺勤</option>
+          </select>
+        </label>
+        <label>备注 <input type="text" name="remark"/></label>
+        <button type="submit">保存</button>
+      </form>
+    </div>
+    <div class="card">
+      <h2>批量录入（同日同课）</h2>
+      <form th:action="@{/teach/attendance/batch}" method="post">
+        <div class="form-row">
+          <label>课程
+            <select name="courseId" required>
+              <option th:each="c : ${courses}" th:value="${c.id}" th:text="${c.courseName}"></option>
+            </select>
+          </label>
+          <label>日期 <input type="date" name="attendDate" required/></label>
+        </div>
+        <table class="data">
+          <thead><tr><th>学生</th><th>状态</th></tr></thead>
+          <tbody>
+          <tr th:each="s : ${students}">
+            <td>
+              <input type="hidden" name="studentIds" th:value="${s.id}"/>
+              <span th:text="${s.studentNo + ' ' + s.name}"></span>
+            </td>
+            <td>
+              <select name="statuses">
+                <option value="PRESENT">到课</option>
+                <option value="LATE">迟到</option>
+                <option value="LEAVE">请假</option>
+                <option value="ABSENT">缺勤</option>
+              </select>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <p style="margin-top:12px;"><button type="submit">批量保存</button></p>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>

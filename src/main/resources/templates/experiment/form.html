@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head th:replace="~{fragments/common :: head('实验管理')}"></head>
+<body>
+<div class="layout">
+  <div th:replace="~{fragments/layout :: sidebar(user=${user})}"></div>
+  <div class="main">
+    <div class="topbar"><h1>实验管理</h1><a class="btn btn-secondary" th:href="@{/experiment}">返回查询</a></div>
+    <div class="card">
+      <h2>发布实验任务</h2>
+      <form th:action="@{/teach/experiment/save}" method="post" class="form-row">
+        <label>课程<select name="courseId" required>
+          <option th:each="c:${courses}" th:value="${c.id}" th:text="${c.courseName}"></option></select></label>
+        <label>标题<input name="title" required/></label>
+        <label>满分<input type="number" name="fullScore" value="100" step="0.01"/></label>
+        <label>截止日期<input type="date" name="dueDate"/></label>
+        <button type="submit">发布</button>
+      </form>
+      <table class="data" style="margin-top:12px;">
+        <thead><tr><th>ID</th><th>课程</th><th>标题</th><th>满分</th><th>截止</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="e:${experiments}">
+          <td th:text="${e.id}"></td><td th:text="${e.courseName}"></td><td th:text="${e.title}"></td>
+          <td th:text="${e.fullScore}"></td>
+          <td th:text="${e.dueDate != null ? #dates.format(e.dueDate,'yyyy-MM-dd') : '-'}"></td>
+          <td>
+            <form th:action="@{/teach/experiment/delete/{id}(id=${e.id})}" method="post" style="display:inline"
+                  onsubmit="return confirm('确认删除？')">
+              <button type="submit" class="btn btn-sm btn-danger">删除</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h2>录入实验成绩 / 完成度</h2>
+      <form th:action="@{/teach/experiment/record}" method="post" class="form-row">
+        <label>实验<select name="experimentId" required>
+          <option th:each="e:${experiments}" th:value="${e.id}" th:text="${e.title}"></option></select></label>
+        <label>学生<select name="studentId" required>
+          <option th:each="s:${students}" th:value="${s.id}" th:text="${s.studentNo+' - '+s.name}"></option></select></label>
+        <label>完成度%<input type="number" name="completion" min="0" max="100" step="0.01" required/></label>
+        <label>得分<input type="number" name="score" min="0" max="100" step="0.01"/></label>
+        <label>备注<input name="remark"/></label>
+        <button type="submit">保存记录</button>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>

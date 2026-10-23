@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head th:replace="~{fragments/common :: head('教师管理')}"></head>
+<body>
+<div class="layout">
+  <div th:replace="~{fragments/layout :: sidebar(user=${user})}"></div>
+  <div class="main">
+    <div th:replace="~{fragments/common :: topbar('教师管理')}"></div>
+    <div th:if="${param.msg != null and param.msg[0] == 'pwdReset'}" class="alert alert-ok">
+      密码已重置为默认密码 123456，该教师下次登录需重新设置密码。
+    </div>
+    <div th:if="${param.msg != null and param.msg[0] == 'toggled'}" class="alert alert-ok">
+      账号状态已切换（禁用后该教师无法登录）。
+    </div>
+    <div th:if="${param.error != null and param.error[0] == 'hasCourses'}" class="alert alert-error">
+      该教师名下还有课程，不能直接删除。请先把课程转给其他教师或删除课程。
+    </div>
+    <div class="card">
+      <form th:action="@{/admin/teacher/save}" method="post" class="form-row" id="teacherForm">
+        <input type="hidden" name="id" id="teacherId"/>
+        <label>工号<input name="teacherNo" id="teacherNo" required/></label>
+        <label>姓名<input name="name" id="teacherName" required/></label>
+        <label>性别<select name="gender" id="teacherGender"><option>男</option><option>女</option></select></label>
+        <label>职称<input name="title" id="teacherTitle"/></label>
+        <label>电话<input name="phone" id="teacherPhone"/></label>
+        <label>邮箱<input name="email" id="teacherEmail"/></label>
+        <button type="submit">保存（新增时同步开户，密码123456）</button>
+      </form>
+      <table class="data">
+        <thead><tr><th>工号</th><th>姓名</th><th>性别</th><th>职称</th><th>电话</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="t:${list}">
+          <td th:text="${t.teacherNo}"></td><td th:text="${t.name}"></td><td th:text="${t.gender}"></td>
+          <td th:text="${t.title}"></td><td th:text="${t.phone}"></td>
+          <td>
+            <button type="button" class="btn btn-sm btn-edit"
+                    th:attr="data-id=${t.id},data-teacherno=${t.teacherNo},data-name=${t.name},data-gender=${t.gender},data-title=${t.title},data-phone=${t.phone},data-email=${t.email}"
+                    onclick="editTeacher(this)">编辑</button>
+            <form th:action="@{/admin/teacher/reset/{id}(id=${t.id})}" method="post" style="display:inline"
+                  onsubmit="return confirm('确认把该教师密码重置为默认密码 123456？')">
+              <button type="submit" class="btn btn-sm">重置密码</button>
+            </form>
+            <form th:action="@{/admin/teacher/toggle/{id}(id=${t.id})}" method="post" style="display:inline">
+              <button type="submit" class="btn btn-sm">启用/禁用</button>
+            </form>
+            <form th:action="@{/admin/teacher/delete/{id}(id=${t.id})}" method="post" style="display:inline"
+                  onsubmit="return confirm('确认删除？')">
+              <button type="submit" class="btn btn-sm btn-danger">删除</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+function editTeacher(btn) {
+  var d = btn.dataset;
+  document.getElementById('teacherId').value = d.id;
+  document.getElementById('teacherNo').value = d.teacherno || '';
+  document.getElementById('teacherName').value = d.name || '';
+  document.getElementById('teacherGender').value = d.gender || '男';
+  document.getElementById('teacherTitle').value = d.title || '';
+  document.getElementById('teacherPhone').value = d.phone || '';
+  document.getElementById('teacherEmail').value = d.email || '';
+  document.getElementById('teacherForm').scrollIntoView({behavior: 'smooth'});
+}
+</script>
+</body>
+</html>
