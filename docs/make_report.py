@@ -663,7 +663,7 @@ shots = [
 for name, cap in shots:
     path = os.path.join(SHOT, name)
     if os.path.exists(path):
-        image(path, 14.0, cap)
+        image(path, 12.5, cap)
     else:
         p = doc.add_paragraph("【请在此处插入截图：" + cap[2:] + "】", style="CaptionCN")
         p.runs[0].font.color.rgb = RGBColor(0x9C, 0xA3, 0xAF)

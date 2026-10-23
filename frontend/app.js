@@ -13,6 +13,8 @@ const fmtDate = (v) => {
   const s = String(v);
   return s.includes('T00:00:00') ? s.slice(0, 10) : fmt(s);
 };
+const ATT_LABEL = { PRESENT: '到课', LATE: '迟到', LEAVE: '请假', ABSENT: '缺勤' };
+const HW_LABEL = { SUBMITTED: '已提交', GRADED: '已批改', PENDING: '未交' };
 const esc = (v) => String(v === null || v === undefined ? '' : v)
   .replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const roleLabel = (r) => ({ ADMIN: '管理员', TEACHER: '教师', STUDENT: '学生' }[r] || r);
@@ -205,7 +207,7 @@ async function renderAttendance() {
   const data = await API.get(`/attendance?courseId=${f.courseId || ''}&clazzId=${f.clazzId || ''}&page=${f.page}`);
   const canEdit = state.user.roleCode !== 'STUDENT';
   const rows = data.rows.map((r) => [
-    fmtDate(r.attendDate), esc(r.studentNo), esc(r.studentName), esc(r.className), esc(r.courseName), esc(r.status), esc(r.remark),
+    fmtDate(r.attendDate), esc(r.studentNo), esc(r.studentName), esc(r.className), esc(r.courseName), esc(ATT_LABEL[r.status] || r.status), esc(r.remark),
     ...(canEdit ? [`<button class="danger" data-act="del" data-id="${r.id}">删除</button>`] : []),
   ]);
 
@@ -290,7 +292,7 @@ async function renderHomework() {
   const f = homeworkFilter;
   const data = await API.get(`/homework?courseId=${f.courseId || ''}&page=${f.page}`);
   const canEdit = state.user.roleCode !== 'STUDENT';
-  const rows = data.rows.map((r) => [esc(r.homeworkTitle), esc(r.courseName), esc(r.studentNo), esc(r.studentName), esc(r.status), r.score, fmt(r.submitTime),
+  const rows = data.rows.map((r) => [esc(r.homeworkTitle), esc(r.courseName), esc(r.studentNo), esc(r.studentName), esc(HW_LABEL[r.status] || r.status), r.score, fmt(r.submitTime),
     ...(canEdit ? [`<button class="danger" data-act="del" data-id="${r.id}">删除</button>`] : [])]);
   mount('作业', `
     <div class="card">
