@@ -140,36 +140,36 @@ def code(text):
     p.add_run(text)
     return p
 
-# ---------- 封面信息 ----------
-cover = {6: ("实训选题：", "大学智能课程管理系统的设计与开发"),
-         7: ("指导老师：", "廖景昌"),
-         8: ("专业班级：", "23gb物联网工程1班"),
-         9: ("学生姓名：", "刘中天"),
-         10: ("学    号：", "20231026120")}
-for idx, (label, value) in cover.items():
+# ---------- 封面信息（保留模板下划线版式） ----------
+cover = {
+    6: ("大学智能课程管理系统的设计与开发  ", 16),
+    7: None,  # 模板中已填“廖景昌”
+    8: ("23gb物联网工程1班                  ", 22),
+    9: ("刘中天                            ", 22),
+    10: ("20231026120                       ", 22),
+}
+for idx, item in cover.items():
+    if item is None:
+        continue
+    value, size = item
     p = doc.paragraphs[idx]
-    if p.runs:
-        p.runs[0].text = label + value
-        for r in p.runs[1:]:
-            r.text = ""
-
-# 压缩封面行距，保证一页装下
-for i in range(0, 11):
-    p = doc.paragraphs[i]
-    pf = p.paragraph_format
-    pf.space_before = Pt(0)
-    pf.space_after = Pt(0)
-    pf.line_spacing = 1.0
-    size = 16 if i == 6 else 18
-    if i in (0, 1, 2, 3, 5):
-        size = 14
+    filled = False
     for r in p.runs:
+        if r.underline and not r.text.strip():
+            r.text = value
+            r.font.size = Pt(size)
+            filled = True
+            break
+    if not filled:
+        r = p.add_run(value)
+        r.underline = True
         r.font.size = Pt(size)
 
-# ---------- 删除章节占位，保留封面；成绩表移到文末 ----------
-table_el = doc.tables[0]._element
+# 与模板一致：学生姓名、学号另起一页
+doc.paragraphs[9].paragraph_format.page_break_before = True
+
+# ---------- 删除章节占位，保留模板封面与成绩表 ----------
 body_el = doc.element.body
-body_el.remove(table_el)
 for p in list(doc.paragraphs[11:]):
     p._p.getparent().remove(p._p)
 
@@ -769,11 +769,6 @@ CREATE TABLE IF NOT EXISTS attendance (
     CONSTRAINT fk_att_course FOREIGN KEY (course_id)
         REFERENCES course(id) ON DELETE CASCADE
 );""")
-
-# 成绩评定表放到最后
-end_break = doc.add_paragraph()
-end_break.paragraph_format.page_break_before = True
-body_el.insert(len(body_el) - 1, table_el)
 
 # 保存
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
