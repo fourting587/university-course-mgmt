@@ -1,0 +1,11 @@
+target/
+.git/
+.gitignore
+.idea/
+.vscode/
+*.log
+*.iml
+.github/
+README.md
+DEPLOY.md
+信息化系统开发与应用实训说明书.doc

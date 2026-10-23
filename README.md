@@ -71,6 +71,16 @@ spring:
     password: 123456
 ```
 
+## 部署
+
+本项目是前后端一体的 Spring Boot 单体应用（Thymeleaf 服务端渲染），线上只需 **一个 JAR + 一个 MySQL**，不需要单独部署前端。
+
+提供三种方式，详见 [DEPLOY.md](DEPLOY.md)：
+
+- **JAR 直接运行**：`mvn clean package` 后 `java -jar`，配 systemd 常驻
+- **Docker Compose**：`docker compose up -d --build`，自动建库、导数据、起应用
+- **Nginx 反向代理 + HTTPS**：应用监听 1001，Nginx 对外提供 80/443
+
 ## 项目结构
 
 ```
