@@ -87,7 +87,6 @@ function renderLogin(message) {
   app.innerHTML = `
   <div class="login-wrap"><div class="login-card">
     <h1>大学智能课程管理系统</h1>
-    <p class="sub">前后端分离版 · 账号密码登录</p>
     ${message ? `<div class="alert alert-error">${esc(message)}</div>` : ''}
     <div id="loginError"></div>
     <form id="loginForm">
