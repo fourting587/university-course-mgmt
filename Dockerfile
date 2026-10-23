@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-# ---------- 构建阶段 ----------
+# ---------- 构建阶段：Maven + JDK 17 ----------
 FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /build
 
@@ -11,15 +11,17 @@ RUN mvn -q -B -DskipTests dependency:go-offline
 COPY src ./src
 RUN mvn -q -B -DskipTests package
 
-# ---------- 运行阶段 ----------
-FROM eclipse-temurin:17-jre
-WORKDIR /app
+# ---------- 运行阶段：JDK 17 + Tomcat 容器 ----------
+FROM tomcat:10.1-jdk17-temurin
+WORKDIR /usr/local/tomcat
 
 ENV TZ=Asia/Shanghai \
-    JAVA_OPTS="-Xms256m -Xmx512m"
+    CATALINA_OPTS="-Xms256m -Xmx512m"
 
-COPY --from=build /build/target/*.jar app.jar
+# 清掉 Tomcat 自带示例应用，把 WAR 作为 ROOT 应用部署
+RUN rm -rf /usr/local/tomcat/webapps/*
+COPY --from=build /build/target/*.war /usr/local/tomcat/webapps/ROOT.war
 
-EXPOSE 1001
+EXPOSE 8080
 
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+CMD ["catalina.sh", "run"]

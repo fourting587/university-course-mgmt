@@ -30,7 +30,7 @@
 
 ```bash
 mvn clean package -DskipTests
-# 产物：target/course-management-system-1.0.0.jar
+# 产物：target/course-management-system-1.0.0.war
 ```
 
 > 必须用 JDK 17 构建。IDE 如果配了更高版本 JDK，先把 IDE 的 JDK 固定到 17，否则会打出 class version 69 的包。
@@ -52,7 +52,7 @@ CREATE DATABASE IF NOT EXISTS course_mgmt
 ### 2.3 运行
 
 ```bash
-java -jar target/course-management-system-1.0.0.jar \
+java -jar target/course-management-system-1.0.0.war \
   --server.port=1001 \
   --spring.datasource.url="jdbc:mysql://127.0.0.1:3306/course_mgmt?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false" \
   --spring.datasource.username=root \
@@ -78,7 +78,7 @@ Environment=JAVA_OPTS=-Xms256m -Xmx512m
 Environment=SPRING_DATASOURCE_URL=jdbc:mysql://127.0.0.1:3306/course_mgmt?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useSSL=false
 Environment=SPRING_DATASOURCE_USERNAME=cms
 Environment=SPRING_DATASOURCE_PASSWORD=换成强密码
-ExecStart=/usr/bin/java -jar /opt/cms/course-management-system-1.0.0.jar --server.port=1001
+ExecStart=/usr/bin/java -jar /opt/cms/course-management-system-1.0.0.war --server.port=1001
 Restart=always
 RestartSec=5
 
@@ -92,7 +92,29 @@ sudo systemctl enable --now cms
 sudo systemctl status cms
 ```
 
-Windows 服务器可以用 `nssm` 把 JAR 注册成服务，或直接 `start /b java -jar ...`。
+Windows 服务器可以用 `nssm` 把 WAR 注册成服务，或直接 `start /b java -jar ...`。
+
+### 2.5 部署到外部 Tomcat（实训要求）
+
+`mvn clean package` 产出的是 **可执行 WAR**：既可以用 `java -jar` 独立运行（内嵌 Tomcat），也可以直接丢进外部 Tomcat 的 `webapps` 目录。
+
+```bash
+# 1. 构建
+mvn clean package -DskipTests
+# 产物：target/course-management-system-1.0.0.war
+
+# 2. 部署到 Tomcat（以 Tomcat 10.1 + JDK 17 为例）
+cp target/course-management-system-1.0.0.war $CATALINA_HOME/webapps/ROOT.war
+
+# 3. 启动 Tomcat
+export CATALINA_OPTS="-Xms256m -Xmx512m"
+$CATALINA_HOME/bin/catalina.sh run
+```
+
+访问 `http://服务器IP:8080`（Tomcat 默认端口）。  
+`ROOT.war` 会部署在根路径 `/`，所以 `/api/**`、`/login` 等路径都不变。
+
+Docker 方式已经按这个思路实现：`Dockerfile` 使用 `tomcat:10.1-jdk17-temurin` 镜像，把 WAR 复制为 `webapps/ROOT.war`，见下一节。
 
 ---
 

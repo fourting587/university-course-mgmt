@@ -16,6 +16,7 @@
     <version>1.0.0</version>
     <name>university-course-mgmt</name>
     <description>大学智能课程管理系统</description>
+    <packaging>war</packaging>
 
     <properties>
         <java.version>17</java.version>
@@ -34,6 +35,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- 打 WAR 部署到外部 Tomcat 时由容器提供，scope 必须为 provided -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

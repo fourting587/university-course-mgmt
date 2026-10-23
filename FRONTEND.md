@@ -56,7 +56,7 @@ docker compose up -d --build
 
 ```bash
 # 1. 启动后端（IDEA 里跑 CmsApplication 也可以）
-java -jar target/course-management-system-1.0.0.jar --server.port=1001
+java -jar target/course-management-system-1.0.0.war --server.port=1001
 
 # 2. 启动前端静态服务器（需要本机 Node）
 node frontend/dev-server.js

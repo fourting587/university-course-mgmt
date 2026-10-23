@@ -85,7 +85,12 @@ docker compose up -d --build
 # 前端 http://localhost:8080
 ```
 
-其他部署方式（JAR + systemd、Nginx 反代 + HTTPS）见 [DEPLOY.md](DEPLOY.md)。
+后端构建产物是可执行 WAR（`mvn clean package` → `target/*.war`）：
+
+- Docker 方式：部署到 `tomcat:10.1-jdk17-temurin` 容器的 `webapps/ROOT.war`
+- 手工方式：既可以 `java -jar target/*.war` 独立运行，也可以直接放进外部 Tomcat 的 `webapps/`
+
+其他部署方式（systemd、Nginx 反代 + HTTPS、外部 Tomcat）见 [DEPLOY.md](DEPLOY.md)。
 
 ## 项目结构
 

@@ -32,7 +32,7 @@ services:
       mysql:
         condition: service_healthy
     ports:
-      - "1001:1001"
+      - "1001:8080"
     environment:
       TZ: Asia/Shanghai
       SPRING_PROFILES_ACTIVE: mysql
@@ -40,7 +40,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: "123456"
       SPRING_SQL_INIT_MODE: always
-      JAVA_OPTS: "-Xms256m -Xmx512m"
+      CATALINA_OPTS: "-Xms256m -Xmx512m"
 
   web:
     build:
