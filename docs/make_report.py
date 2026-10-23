@@ -255,13 +255,14 @@ body("""系统后端采用 Java 17 与 Spring Boot 3.5.0，使用 Spring MVC 提
 body("""需要说明的是，课程指导手册中列出的数据库为 SQL Server，本系统实际部署环境采用 MySQL 8.0。两者均为关系型数据库，标准 SQL、事务、外键、索引等核心能力一致；本系统使用的 SQL 语法均控制在通用范围内，表结构、约束与索引设计可直接迁移到 SQL Server。选择 MySQL 主要是考虑课程机房与 Docker 环境的易获取性，以及 utf8mb4 对中文的友好支持。""")
 
 h1("二．实验环境及配置介绍")
-body("""本章介绍系统开发与运行所需的软件环境、安装配置步骤以及环境验证方法。实验环境以 Windows 11 为开发主机，使用 JDK 17 编译，MySQL 8.0 存储数据，Docker 负责运行期编排。""")
+body("""本章介绍系统开发与运行所需的软件环境、安装配置步骤以及环境验证方法。实验环境以 Windows 11 为开发主机，使用 IntelliJ IDEA / VS Code 进行开发，JDK 17 编译运行，MySQL 8.0 存储数据，Docker 负责运行期编排。""")
 
 h2("2.1 开发工具与版本")
 caption("表 2-1 开发环境与软件版本")
 table(["类别", "软件/工具", "版本", "用途"], [
     ["操作系统", "Windows 11 64 位", "23H2", "开发与运行环境"],
-    ["JDK", "Eclipse Temurin JDK", "17.0.x", "编译与运行 Java 程序"],
+    ["JDK", "Eclipse Temurin JDK", "17.0.x", "提供 Java 编译与运行环境"],
+    ["集成开发环境（IDE）", "IntelliJ IDEA / VS Code", "2024.x / 最新版", "编写、编译、调试和运行 Java 程序"],
     ["构建工具", "Apache Maven", "3.9.x", "依赖管理与打包"],
     ["框架", "Spring Boot", "3.5.0", "Web、IoC、事务、嵌入式容器"],
     ["持久层", "MyBatis Spring Boot Starter", "3.0.5", "SQL 映射与数据访问"],
