@@ -52,6 +52,9 @@ public interface HomeworkMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insertRecord(HomeworkRecord record);
 
+    @Select("SELECT * FROM homework_record WHERE homework_id=#{homeworkId} AND student_id=#{studentId}")
+    HomeworkRecord findRecord(@Param("homeworkId") Integer homeworkId, @Param("studentId") Integer studentId);
+
     @Update("UPDATE homework_record SET score=#{score}, status=#{status}, submit_time=#{submitTime}, remark=#{remark} WHERE id=#{id}")
     int updateRecord(HomeworkRecord record);
 

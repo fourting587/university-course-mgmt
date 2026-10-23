@@ -99,6 +99,30 @@ http://localhost:8080
 | GET | `/api/scores/export?courseId&type` | 导出 CSV | 同上 |
 | GET | `/api/audit?page` | 操作日志 | 管理员 |
 
+### 写接口（新前端已接入）
+
+| 方法 | 路径 | 说明 | 权限 |
+|------|------|------|------|
+| POST / DELETE | `/api/admin/classes`、`/api/admin/classes/{id}` | 班级增改/删除 | 管理员 |
+| POST / DELETE | `/api/admin/teachers`、`/{id}` | 教师增改/删除 | 管理员 |
+| POST | `/api/admin/teachers/{id}/reset`、`/toggle` | 重置密码 / 启停 | 管理员 |
+| POST / DELETE | `/api/admin/students`、`/{id}` | 学生增改/删除 | 管理员 |
+| POST | `/api/admin/students/{id}/reset`、`/toggle` | 重置密码 / 启停 | 管理员 |
+| POST / DELETE | `/api/admin/courses`、`/{id}` | 课程增改/删除（含授课班级） | 管理员 |
+| POST / DELETE | `/api/admin/rules`、`/{id}` | 评价规则增改/删除 | 管理员 |
+| GET | `/api/admin/teachers`、`/api/admin/courses`、`/api/admin/rules` | 管理端下拉/列表 | 管理员 |
+| GET | `/api/courses/{id}/students` | 课程学生名单（录入用） | 教师（本人课程）/管理员 |
+| POST / DELETE | `/api/attendance`、`/api/attendance/{id}` | 单条考勤 | 教师/管理员 |
+| POST | `/api/attendance/batch` | 批量考勤 | 教师/管理员 |
+| POST / DELETE | `/api/performance`、`/api/performance/{id}` | 课堂表现 | 教师/管理员 |
+| POST / DELETE | `/api/experiments`、`/api/experiments/{id}` | 实验定义 | 教师/管理员 |
+| POST / DELETE | `/api/experiments/records`、`/api/experiments/records/{id}` | 实验记录 | 教师/管理员 |
+| POST / DELETE | `/api/homework`、`/api/homework/{id}` | 作业定义 | 教师/管理员 |
+| POST / DELETE | `/api/homework/records`、`/api/homework/records/{id}` | 作业记录 | 教师/管理员 |
+| GET | `/api/experiment-defs`、`/api/homework-defs` | 实验/作业下拉 | 教师/管理员 |
+| POST / DELETE | `/api/exams`、`/api/exams/{id}` | 期末成绩（按学生+课程自动覆盖） | 教师/管理员 |
+| GET | `/api/exams?courseId` | 某课程期末成绩 | 教师/管理员 |
+
 ## 与旧界面的关系
 
 - 旧的 Thymeleaf 页面（`/login`、`/admin/**`、`/teach/**`）仍可用，适合过渡期

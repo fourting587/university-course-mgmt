@@ -28,7 +28,11 @@ function shell(title, contentHtml) {
     ['#/homework', '作业'],
     ['#/courses', '课程'],
   ];
-  if (role === 'ADMIN') links.push(['#/students', '学生管理'], ['#/audit', '操作日志']);
+  if (role === 'ADMIN' || role === 'TEACHER') links.push(['#/exam', '期末录入']);
+  if (role === 'ADMIN') {
+    links.push(['#/classes', '班级管理'], ['#/teachers', '教师管理'],
+      ['#/students', '学生管理'], ['#/rules', '评价规则'], ['#/audit', '操作日志']);
+  }
   links.push(['#/password', '修改密码']);
 
   return `
@@ -199,19 +203,27 @@ async function renderAttendance() {
   const [courses, classes] = await Promise.all([API.get('/courses'), API.get('/classes')]);
   const f = attendanceFilter;
   const data = await API.get(`/attendance?courseId=${f.courseId || ''}&clazzId=${f.clazzId || ''}&page=${f.page}`);
+  const canEdit = state.user.roleCode !== 'STUDENT';
   const rows = data.rows.map((r) => [
     fmtDate(r.attendDate), esc(r.studentNo), esc(r.studentName), esc(r.className), esc(r.courseName), esc(r.status), esc(r.remark),
+    ...(canEdit ? [`<button class="danger" data-act="del" data-id="${r.id}">删除</button>`] : []),
   ]);
 
-  mount('考勤查询', `
+  mount('考勤', `
     <div class="card">
+      ${canEdit ? '<div class="toolbar"><button id="addBtn">单条录入</button><button class="ghost" id="batchBtn">批量录入</button></div>' : ''}
       <div class="filters">
         <label>课程<select id="courseSel"><option value="">全部</option>${courses.map((c) => `<option value="${c.id}" ${String(c.id) === String(f.courseId) ? 'selected' : ''}>${esc(c.courseName)}</option>`).join('')}</select></label>
         <label>班级<select id="clazzSel"><option value="">全部</option>${classes.map((c) => `<option value="${c.id}" ${String(c.id) === String(f.clazzId) ? 'selected' : ''}>${esc(c.className)}</option>`).join('')}</select></label>
       </div>
-      ${table(['日期', '学号', '姓名', '班级', '课程', '状态', '备注'], rows)}
+      ${table(['日期', '学号', '姓名', '班级', '课程', '状态', '备注', ...(canEdit ? ['操作'] : [])], rows)}
       ${pager(data)}
     </div>`);
+  if (canEdit) {
+    document.getElementById('addBtn').onclick = () => openAttendanceForm(courses);
+    document.getElementById('batchBtn').onclick = () => openBatchAttendance(courses);
+    bindActions({ del: (id) => removeEntity(`/api/attendance/${id}`, '确定删除这条考勤记录？', renderAttendance) });
+  }
   document.getElementById('courseSel').onchange = (e) => { f.courseId = e.target.value; f.page = 1; renderAttendance(); };
   document.getElementById('clazzSel').onchange = (e) => { f.clazzId = e.target.value; f.page = 1; renderAttendance(); };
   bindPager(data, (p) => { f.page = p; renderAttendance(); });
@@ -228,13 +240,20 @@ async function renderPerformance() {
   const courses = await API.get('/courses');
   const f = performanceFilter;
   const data = await API.get(`/performance?courseId=${f.courseId || ''}&page=${f.page}`);
-  const rows = data.rows.map((r) => [fmtDate(r.recordDate), esc(r.studentNo), esc(r.studentName), esc(r.courseName), r.score, esc(r.comment)]);
+  const canEdit = state.user.roleCode !== 'STUDENT';
+  const rows = data.rows.map((r) => [fmtDate(r.recordDate), esc(r.studentNo), esc(r.studentName), esc(r.courseName), r.score, esc(r.comment),
+    ...(canEdit ? [`<button class="danger" data-act="del" data-id="${r.id}">删除</button>`] : [])]);
   mount('课堂表现', `
     <div class="card">
+      ${canEdit ? '<div class="toolbar"><button id="addBtn">录入表现</button></div>' : ''}
       <div class="filters"><label>课程<select id="courseSel"><option value="">全部</option>${courses.map((c) => `<option value="${c.id}" ${String(c.id) === String(f.courseId) ? 'selected' : ''}>${esc(c.courseName)}</option>`).join('')}</select></label></div>
-      ${table(['日期', '学号', '姓名', '课程', '得分', '评语'], rows)}
+      ${table(['日期', '学号', '姓名', '课程', '得分', '评语', ...(canEdit ? ['操作'] : [])], rows)}
       ${pager(data)}
     </div>`);
+  if (canEdit) {
+    document.getElementById('addBtn').onclick = () => openPerformanceForm(courses);
+    bindActions({ del: (id) => removeEntity(`/api/performance/${id}`, '确定删除这条表现记录？', renderPerformance) });
+  }
   document.getElementById('courseSel').onchange = (e) => { f.courseId = e.target.value; f.page = 1; renderPerformance(); };
   bindPager(data, (p) => { f.page = p; renderPerformance(); });
 }
@@ -243,13 +262,25 @@ async function renderExperiments() {
   const courses = await API.get('/courses');
   const f = experimentFilter;
   const data = await API.get(`/experiments?courseId=${f.courseId || ''}&page=${f.page}`);
-  const rows = data.rows.map((r) => [esc(r.experimentTitle), esc(r.courseName), esc(r.studentNo), esc(r.studentName), r.completion, r.score, fmt(r.submitTime)]);
+  const canEdit = state.user.roleCode !== 'STUDENT';
+  const rows = data.rows.map((r) => [esc(r.experimentTitle), esc(r.courseName), esc(r.studentNo), esc(r.studentName), r.completion, r.score, fmt(r.submitTime),
+    ...(canEdit ? [`<button class="danger" data-act="del" data-id="${r.id}">删除</button>`] : [])]);
   mount('实验', `
     <div class="card">
+      ${canEdit ? '<div class="toolbar"><button id="addBtn">新建实验</button><button class="ghost" id="recBtn">录入记录</button></div>' : ''}
       <div class="filters"><label>课程<select id="courseSel"><option value="">全部</option>${courses.map((c) => `<option value="${c.id}" ${String(c.id) === String(f.courseId) ? 'selected' : ''}>${esc(c.courseName)}</option>`).join('')}</select></label></div>
-      ${table(['实验', '课程', '学号', '姓名', '完成度', '得分', '提交时间'], rows)}
+      ${table(['实验', '课程', '学号', '姓名', '完成度', '得分', '提交时间', ...(canEdit ? ['操作'] : [])], rows)}
       ${pager(data)}
     </div>`);
+  if (canEdit) {
+    document.getElementById('addBtn').onclick = () => openExperimentForm(courses);
+    document.getElementById('recBtn').onclick = async () => {
+      const defs = await API.get('/experiment-defs');
+      if (!defs.length) { alert('还没有实验，请先新建实验'); return; }
+      openExperimentRecordForm(defs, courses);
+    };
+    bindActions({ del: (id) => removeEntity(`/api/experiments/records/${id}`, '确定删除这条实验记录？', renderExperiments) });
+  }
   document.getElementById('courseSel').onchange = (e) => { f.courseId = e.target.value; f.page = 1; renderExperiments(); };
   bindPager(data, (p) => { f.page = p; renderExperiments(); });
 }
@@ -258,45 +289,27 @@ async function renderHomework() {
   const courses = await API.get('/courses');
   const f = homeworkFilter;
   const data = await API.get(`/homework?courseId=${f.courseId || ''}&page=${f.page}`);
-  const rows = data.rows.map((r) => [esc(r.homeworkTitle), esc(r.courseName), esc(r.studentNo), esc(r.studentName), esc(r.status), r.score, fmt(r.submitTime)]);
+  const canEdit = state.user.roleCode !== 'STUDENT';
+  const rows = data.rows.map((r) => [esc(r.homeworkTitle), esc(r.courseName), esc(r.studentNo), esc(r.studentName), esc(r.status), r.score, fmt(r.submitTime),
+    ...(canEdit ? [`<button class="danger" data-act="del" data-id="${r.id}">删除</button>`] : [])]);
   mount('作业', `
     <div class="card">
+      ${canEdit ? '<div class="toolbar"><button id="addBtn">新建作业</button><button class="ghost" id="recBtn">录入记录</button></div>' : ''}
       <div class="filters"><label>课程<select id="courseSel"><option value="">全部</option>${courses.map((c) => `<option value="${c.id}" ${String(c.id) === String(f.courseId) ? 'selected' : ''}>${esc(c.courseName)}</option>`).join('')}</select></label></div>
-      ${table(['作业', '课程', '学号', '姓名', '状态', '得分', '提交时间'], rows)}
+      ${table(['作业', '课程', '学号', '姓名', '状态', '得分', '提交时间', ...(canEdit ? ['操作'] : [])], rows)}
       ${pager(data)}
     </div>`);
+  if (canEdit) {
+    document.getElementById('addBtn').onclick = () => openHomeworkForm(courses);
+    document.getElementById('recBtn').onclick = async () => {
+      const defs = await API.get('/homework-defs');
+      if (!defs.length) { alert('还没有作业，请先新建作业'); return; }
+      openHomeworkRecordForm(defs, courses);
+    };
+    bindActions({ del: (id) => removeEntity(`/api/homework/records/${id}`, '确定删除这条作业记录？', renderHomework) });
+  }
   document.getElementById('courseSel').onchange = (e) => { f.courseId = e.target.value; f.page = 1; renderHomework(); };
   bindPager(data, (p) => { f.page = p; renderHomework(); });
-}
-
-async function renderCourses() {
-  const courses = await API.get('/courses');
-  const rows = courses.map((c) => [esc(c.courseNo), esc(c.courseName), c.credit, esc(c.semester), esc(c.teacherName)]);
-  mount('课程', `<div class="card">${table(['课程号', '名称', '学分', '学期', '教师'], rows)}</div>`);
-}
-
-async function renderStudents() {
-  const classes = await API.get('/classes');
-  const f = studentFilter;
-  const data = await API.get(`/students?keyword=${encodeURIComponent(f.keyword)}&clazzId=${f.clazzId || ''}&page=${f.page}`);
-  const rows = data.rows.map((s) => [esc(s.studentNo), esc(s.name), esc(s.gender), esc(s.className), esc(s.phone)]);
-  mount('学生管理', `
-    <div class="card">
-      <div class="filters">
-        <label>关键字<input id="keyword" value="${esc(f.keyword)}" placeholder="学号/姓名"/></label>
-        <label>班级<select id="clazzSel"><option value="">全部</option>${classes.map((c) => `<option value="${c.id}" ${String(c.id) === String(f.clazzId) ? 'selected' : ''}>${esc(c.className)}</option>`).join('')}</select></label>
-        <button id="searchBtn">查询</button>
-      </div>
-      ${table(['学号', '姓名', '性别', '班级', '电话'], rows)}
-      ${pager(data)}
-    </div>`);
-  document.getElementById('searchBtn').onclick = () => {
-    f.keyword = document.getElementById('keyword').value.trim();
-    f.clazzId = document.getElementById('clazzSel').value;
-    f.page = 1;
-    renderStudents();
-  };
-  bindPager(data, (p) => { f.page = p; renderStudents(); });
 }
 
 async function renderAudit() {
@@ -347,16 +360,20 @@ async function renderPassword() {
 // ---------------- 路由 ----------------
 
 const routes = {
-  '/dashboard': renderDashboard,
-  '/scores': renderScores,
-  '/attendance': renderAttendance,
-  '/performance': renderPerformance,
-  '/experiments': renderExperiments,
-  '/homework': renderHomework,
-  '/courses': renderCourses,
-  '/students': renderStudents,
-  '/audit': renderAudit,
-  '/password': renderPassword,
+  '/dashboard': () => renderDashboard(),
+  '/scores': () => renderScores(),
+  '/attendance': () => renderAttendance(),
+  '/performance': () => renderPerformance(),
+  '/experiments': () => renderExperiments(),
+  '/homework': () => renderHomework(),
+  '/courses': () => renderCourses(),
+  '/students': () => renderStudents(),
+  '/classes': () => renderClasses(),
+  '/teachers': () => renderTeachers(),
+  '/rules': () => renderRules(),
+  '/exam': () => renderExam(),
+  '/audit': () => renderAudit(),
+  '/password': () => renderPassword(),
 };
 
 async function router() {

@@ -1,6 +1,6 @@
 FROM nginx:1.27-alpine
 
 COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
-COPY frontend/index.html frontend/app.js frontend/api.js frontend/style.css /usr/share/nginx/html/
+COPY frontend/index.html frontend/app.js frontend/api.js frontend/forms.js frontend/style.css /usr/share/nginx/html/
 
 EXPOSE 80

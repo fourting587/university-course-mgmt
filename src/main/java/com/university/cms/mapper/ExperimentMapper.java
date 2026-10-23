@@ -52,6 +52,9 @@ public interface ExperimentMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     int insertRecord(ExperimentRecord record);
 
+    @Select("SELECT * FROM experiment_record WHERE experiment_id=#{experimentId} AND student_id=#{studentId}")
+    ExperimentRecord findRecord(@Param("experimentId") Integer experimentId, @Param("studentId") Integer studentId);
+
     @Update("UPDATE experiment_record SET score=#{score}, completion=#{completion}, submit_time=#{submitTime}, remark=#{remark} WHERE id=#{id}")
     int updateRecord(ExperimentRecord record);
 

@@ -37,6 +37,36 @@ button.danger { background: var(--danger); }
   border-radius: 6px;
   font-size: 13px;
 }
+
+.toolbar { display: flex; gap: 10px; margin-bottom: 14px; }
+.actions button { padding: 4px 8px; font-size: 12px; margin-right: 4px; }
+.actions .danger, td .danger { background: var(--danger); }
+td button { padding: 4px 8px; font-size: 12px; }
+.muted { color: #94a3b8; }
+
+.modal-mask {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(15, 23, 42, .55);
+  display: grid; place-items: center; padding: 20px;
+}
+.modal {
+  width: min(600px, 100%); max-height: 90vh; overflow: auto;
+  background: #fff; border-radius: 12px; padding: 22px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, .25);
+}
+.modal h2 { margin: 0 0 16px; font-size: 18px; }
+.fld { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; font-size: 12px; color: var(--muted); }
+.fld input, .fld select, .fld textarea { width: 100%; }
+.fld textarea { min-height: 70px; resize: vertical; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+.modal-error { color: var(--danger); font-size: 12px; min-height: 16px; margin-top: 6px; }
+.chk-group { display: flex; flex-wrap: wrap; gap: 8px 16px; padding-top: 4px; }
+.chk { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--text); }
+.chk input { width: auto; min-width: 0; }
+.batch-list { max-height: 46vh; overflow: auto; border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; }
+.batch-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 6px 0; border-bottom: 1px dashed var(--border); font-size: 13px; }
+.batch-row:last-child { border-bottom: none; }
 input, select {
   padding: 7px 10px;
   border: 1px solid var(--border);

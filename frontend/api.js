@@ -22,4 +22,7 @@ const API = {
   post(path, body) {
     return this.request(path, { method: 'POST', body: JSON.stringify(body || {}) });
   },
+  del(path) {
+    return this.request(path, { method: 'DELETE' });
+  },
 };
