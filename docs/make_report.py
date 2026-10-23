@@ -142,7 +142,7 @@ def code(text):
 
 # ---------- 封面信息（保留模板下划线版式） ----------
 cover = {
-    6: ("大学智能课程管理系统的设计与开发  ", 16),
+    6: ("大学智能课程管理系统的设计与开发          ", 16),
     7: None,  # 模板中已填“廖景昌”
     8: ("23gb物联网工程1班                  ", 22),
     9: ("刘中天                            ", 22),
@@ -165,8 +165,19 @@ for idx, item in cover.items():
         r.underline = True
         r.font.size = Pt(size)
 
-# 与模板一致：学生姓名、学号另起一页
-doc.paragraphs[9].paragraph_format.page_break_before = True
+# 封面压缩到一页：收窄模板的 4 倍行距与空段落
+for i in (0, 1, 2, 3, 5):
+    pf = doc.paragraphs[i].paragraph_format
+    pf.line_spacing = Pt(6)
+    pf.space_before = Pt(0)
+    pf.space_after = Pt(0)
+doc.paragraphs[4].paragraph_format.space_before = Pt(14)
+doc.paragraphs[4].paragraph_format.space_after = Pt(4)
+for i in range(6, 11):
+    pf = doc.paragraphs[i].paragraph_format
+    pf.line_spacing = 1.5
+    pf.space_before = Pt(6)
+    pf.space_after = Pt(0)
 
 # ---------- 删除章节占位，保留模板封面与成绩表 ----------
 body_el = doc.element.body
