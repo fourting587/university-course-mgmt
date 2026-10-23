@@ -29,6 +29,9 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
 
         if (user == null) {
+            if (isApi(uri)) {
+                return writeJson(response, HttpServletResponse.SC_UNAUTHORIZED, "{\"error\":\"未登录\"}");
+            }
             response.sendRedirect(request.getContextPath() + "/login");
             return false;
         }
@@ -36,7 +39,12 @@ public class LoginInterceptor implements HandlerInterceptor {
         // 使用默认密码登录后，必须先修改密码，其他页面一律拦截
         if (Boolean.TRUE.equals(session.getAttribute(Constants.SESSION_MUST_CHANGE))
                 && !uri.startsWith("/password/change")
+                && !uri.startsWith("/api/auth/")
                 && !uri.equals("/logout")) {
+            if (isApi(uri)) {
+                return writeJson(response, HttpServletResponse.SC_FORBIDDEN,
+                        "{\"error\":\"请先修改默认密码\",\"code\":\"MUST_CHANGE\"}");
+            }
             response.sendRedirect(request.getContextPath() + "/password/change");
             return false;
         }
@@ -74,5 +82,16 @@ public class LoginInterceptor implements HandlerInterceptor {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private boolean isApi(String uri) {
+        return uri.startsWith("/api/");
+    }
+
+    private boolean writeJson(HttpServletResponse response, int status, String json) throws Exception {
+        response.setStatus(status);
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(json);
+        return false;
     }
 }

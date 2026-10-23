@@ -32,6 +32,10 @@ spring:
       max-file-size: 10MB
   messages:
     encoding: UTF-8
+  jackson:
+    time-zone: Asia/Shanghai
+    serialization:
+      write-dates-as-timestamps: false
 
 mybatis:
   type-aliases-package: com.university.cms.entity

@@ -73,13 +73,19 @@ spring:
 
 ## 部署
 
-本项目是前后端一体的 Spring Boot 单体应用（Thymeleaf 服务端渲染），线上只需 **一个 JAR + 一个 MySQL**，不需要单独部署前端。
+项目同时提供两套界面：
 
-提供三种方式，详见 [DEPLOY.md](DEPLOY.md)：
+- **前后端分离版（推荐）**：`frontend/` 静态页面 + `/api/**` JSON 接口，前端 8080、后端 1001，详见 [FRONTEND.md](FRONTEND.md)
+- **Thymeleaf 服务端渲染版（保留兼容）**：原有的 1001 端口页面
 
-- **JAR 直接运行**：`mvn clean package` 后 `java -jar`，配 systemd 常驻
-- **Docker Compose**：`docker compose up -d --build`，自动建库、导数据、起应用
-- **Nginx 反向代理 + HTTPS**：应用监听 1001，Nginx 对外提供 80/443
+Docker Compose 会一次启动 **前端（8080）+ 后端（1001）+ MySQL**：
+
+```bash
+docker compose up -d --build
+# 前端 http://localhost:8080
+```
+
+其他部署方式（JAR + systemd、Nginx 反代 + HTTPS）见 [DEPLOY.md](DEPLOY.md)。
 
 ## 项目结构
 

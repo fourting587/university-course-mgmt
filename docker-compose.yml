@@ -10,8 +10,6 @@ services:
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
-    ports:
-      - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
       # 首次启动时自动执行：建表 -> 导入 240 人演示数据
@@ -43,6 +41,17 @@ services:
       SPRING_DATASOURCE_PASSWORD: "123456"
       SPRING_SQL_INIT_MODE: always
       JAVA_OPTS: "-Xms256m -Xmx512m"
+
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: cms-web
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "8080:80"
 
 volumes:
   mysql-data:

@@ -1,14 +1,16 @@
 # 部署指南
 
-## 0. 先说明：这个项目没有独立前端
+## 0. 项目形态
 
-本项目是 **Spring Boot + Thymeleaf 服务端渲染**的单体应用：
+项目现在有两种部署形态：
 
-- 页面（HTML/CSS）在 `src/main/resources/templates` 和 `static` 里，**打包进同一个 JAR**
-- 不需要 Node.js、不需要 `npm build`、不需要单独部署前端
-- 线上只需要两样东西：**一个 Java 进程 + 一个 MySQL**
+| 形态 | 说明 | 端口 |
+|------|------|------|
+| **前后端分离版（推荐）** | `frontend/` 静态页面（原生 JS）+ `/api/**` JSON 接口 | 前端 8080 / 后端 1001 |
+| Thymeleaf 单体版（保留兼容） | 页面随 JAR 一起打包、服务端渲染 | 1001 |
 
-如果你想要「前后端分离」（Vue/React + REST API），需要先把 Controller 改成 JSON 接口，那是另一个改造工程，不是部署问题。
+前后端分离的目录、接口清单和本地开发方式见 [FRONTEND.md](FRONTEND.md)。  
+下面第 2 节讲单体 JAR 部署，第 3 节讲 Compose 一键部署（会同时起前端和后端）。
 
 ---
 
@@ -96,11 +98,19 @@ Windows 服务器可以用 `nssm` 把 JAR 注册成服务，或直接 `start /b 
 
 ## 3. 方式二：Docker Compose（推荐）
 
-仓库已自带 `Dockerfile` 和 `docker-compose.yml`，一条命令起 MySQL + 应用：
+仓库已自带 `Dockerfile`、`frontend/Dockerfile` 和 `docker-compose.yml`，一条命令起 **前端 + 后端 + MySQL**：
 
 ```bash
 docker compose up -d --build
 ```
+
+服务与端口：
+
+| 服务 | 容器 | 端口 |
+|------|------|------|
+| 前端（Nginx 静态页 + /api 反代） | `cms-web` | **8080** |
+| 后端 Spring Boot | `cms-app` | 1001 |
+| MySQL 8.0 | `cms-mysql` | 仅容器网络 |
 
 首次启动会自动：
 
@@ -108,8 +118,9 @@ docker compose up -d --build
 2. 执行 `schema-mysql.sql` 建表
 3. 执行 `data-mysql.sql` 导入演示数据
 4. 启动应用并等待 MySQL 健康检查通过
+5. 启动前端，`/api` 自动反代到后端
 
-访问 `http://服务器IP:1001`。
+访问 `http://服务器IP:8080`（前后端分离版），或 `http://服务器IP:1001`（Thymeleaf 旧版）。
 
 常用命令：
 

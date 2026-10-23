@@ -1,0 +1,128 @@
+:root {
+  --bg: #f1f5f9;
+  --card: #ffffff;
+  --primary: #1a5f7a;
+  --text: #1e293b;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --danger: #dc2626;
+  --ok: #16a34a;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+a { color: var(--primary); text-decoration: none; }
+button {
+  padding: 7px 14px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+button:hover { opacity: .9; }
+button.ghost { background: #e2e8f0; color: var(--text); }
+button.danger { background: var(--danger); }
+.button {
+  display: inline-block;
+  padding: 7px 14px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+}
+input, select {
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  min-width: 140px;
+  background: #fff;
+}
+
+.layout { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 210px;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, #0f3d4c 0%, #1a5f7a 100%);
+  color: #fff;
+  padding: 18px 0;
+}
+.sidebar .brand {
+  padding: 0 20px 18px;
+  font-size: 17px;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255,255,255,.15);
+  margin-bottom: 10px;
+}
+.sidebar nav a {
+  display: block;
+  padding: 10px 20px;
+  color: rgba(255,255,255,.88);
+  font-size: 14px;
+}
+.sidebar nav a:hover, .sidebar nav a.active { background: rgba(255,255,255,.12); color: #fff; }
+.main { flex: 1; padding: 22px 26px; min-width: 0; }
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.topbar h1 { margin: 0; font-size: 21px; }
+.topbar .who { font-size: 13px; color: var(--muted); display: flex; gap: 12px; align-items: center; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+.filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 14px; }
+.filters label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+
+table.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.table th, table.table td {
+  border-bottom: 1px solid var(--border);
+  padding: 9px 10px;
+  text-align: left;
+  white-space: nowrap;
+}
+table.table th { background: #f8fafc; color: var(--muted); font-weight: 600; }
+table.table tr:hover td { background: #f8fafc; }
+.empty { text-align: center; color: #94a3b8; padding: 20px; }
+
+.pager { display: flex; gap: 12px; align-items: center; justify-content: center; margin-top: 14px; font-size: 13px; color: var(--muted); }
+.pager button { padding: 5px 10px; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; }
+.stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+.stat b { display: block; font-size: 26px; color: var(--primary); }
+.stat span { font-size: 12px; color: var(--muted); }
+
+.alert { padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; font-size: 13px; }
+.alert-error { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; }
+.alert-ok { background: #f0fdf4; color: var(--ok); border: 1px solid #bbf7d0; }
+
+.login-wrap { min-height: 100vh; display: grid; place-items: center; background: linear-gradient(135deg, #0f3d4c, #1a5f7a); }
+.login-card { width: 340px; background: #fff; border-radius: 12px; padding: 26px; box-shadow: 0 20px 40px rgba(0,0,0,.2); }
+.login-card h1 { font-size: 19px; margin: 0 0 6px; }
+.login-card .sub { color: var(--muted); font-size: 12px; margin: 0 0 18px; }
+.login-card .field { margin-bottom: 12px; display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: var(--muted); }
+.login-card input { width: 100%; }
+.login-card button { width: 100%; padding: 9px; margin-top: 4px; }
+
+@media (max-width: 760px) {
+  .layout { flex-direction: column; }
+  .sidebar { width: 100%; }
+  .sidebar nav { display: flex; flex-wrap: wrap; }
+  .sidebar nav a { padding: 8px 12px; }
+}
