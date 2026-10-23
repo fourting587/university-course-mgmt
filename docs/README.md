@@ -1,6 +1,6 @@
 # 实训材料说明
 
-本目录是《信息化系统开发与应用》实训的交付材料，基于学院提供的《实训报告模板.docx》生成。
+本目录是《信息化系统开发与应用》实训的交付材料，基于学院提供的《信息化系统开发与应用)》实训报告模板.docx 生成（模板与说明书均已归档在本目录）。
 
 ## 交付清单
 
@@ -12,6 +12,8 @@
 | `ER图-基础数据.png` | 基础数据 E-R 图（报告图 5-1） |
 | `ER图-教学数据.png` | 教学数据 E-R 图（报告图 5-2） |
 | `测试用例.xlsx` | 30 条系统测试用例（含模块、前置条件、操作、预期结果、结论） |
+| `《信息化系统开发与应用)》实训报告模板.docx` | 学院提供的报告模板（生成报告的输入） |
+| `信息化系统开发与应用实训说明书.doc` | 学院提供的实训任务说明书 |
 
 ## 报告结构
 
@@ -40,12 +42,17 @@
 
 ```bash
 python docs/make_diagrams.py     # 生成图（SVG -> HTML）
-# 用 Chrome 截图 docs/src/*.html 得到 docs/*.png
+powershell -ExecutionPolicy Bypass -File docs/render_diagrams.ps1  # HTML -> PNG（需 Chrome）
 python docs/trim_diagrams.py     # 裁白边、去背景
 python docs/make_report.py       # 基于模板生成 docx
 python docs/make_testcases.py    # 生成测试用例 xlsx
+
+# 运行截图（需系统已启动，且存在 tmpadmin/Test@123 管理员）
+# Chrome 以 --remote-debugging-port=9333 启动后执行：
+node docs/capture_screenshots.js
 ```
 
+> 依赖：Python 3（python-docx、openpyxl、Pillow）、Node.js、Chrome。
 > 生成报告后需在 Word 中更新一次目录域（脚本已设置打开时自动更新）。
 
 ## 说明

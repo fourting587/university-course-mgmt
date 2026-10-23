@@ -9,3 +9,7 @@ target/
 *.class
 .vscode/
 .github/modernize/
+.dsh-office-*/
+docs/src/
+__pycache__/
+*.pyc

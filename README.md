@@ -92,6 +92,13 @@ docker compose up -d --build
 
 其他部署方式（systemd、Nginx 反代 + HTTPS、外部 Tomcat）见 [DEPLOY.md](DEPLOY.md)。
 
+## 实训材料
+
+- [docs/README.md](docs/README.md)：材料清单与重新生成方法
+- `docs/信息化系统开发与应用实训报告-刘中天-20231026120.docx`：实训报告（38 页）
+- `docs/测试用例.xlsx`：30 条系统测试用例
+- `docs/ER图-基础数据.png`、`docs/ER图-教学数据.png`、`docs/功能模块图.png`：设计图
+
 ## 项目结构
 
 ```
@@ -106,6 +113,8 @@ src/main/resources/
   db/           # MySQL 初始化脚本
   templates/    # Thymeleaf 页面
   static/       # 静态资源
+frontend/       # 前后端分离版静态页面
+docs/           # 实训报告、ER 图、功能模块图、测试用例
 ```
 
 ## 常见问题

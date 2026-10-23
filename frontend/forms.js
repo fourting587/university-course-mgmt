@@ -60,13 +60,6 @@ function bindActions(handlers) {
   });
 }
 
-async function refData() {
-  const [courses, classes, teachers] = await Promise.all([
-    API.get('/courses'), API.get('/classes'), API.get('/admin/teachers').catch(() => []),
-  ]);
-  return { courses, classes, teachers };
-}
-
 // ===================== 管理员：班级 =====================
 
 async function renderClasses() {

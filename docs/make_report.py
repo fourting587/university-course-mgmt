@@ -3,13 +3,13 @@
 import os
 from docx import Document
 from docx.shared import Pt, Cm, RGBColor
-from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 
-BASE = r"C:\Users\86023\Desktop\university-course-mgmt"
-TEMPLATE = os.path.join(BASE, "《信息化系统开发与应用)》实训报告模板.docx")
+BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+TEMPLATE = os.path.join(BASE, "docs", "《信息化系统开发与应用)》实训报告模板.docx")
 OUT = os.path.join(BASE, "docs", "信息化系统开发与应用实训报告-刘中天-20231026120.docx")
 SHOT = os.path.join(BASE, "docs", "screenshots")
 
@@ -180,7 +180,6 @@ for i in range(6, 11):
     pf.space_after = Pt(0)
 
 # ---------- 删除章节占位，保留模板封面与成绩表 ----------
-body_el = doc.element.body
 for p in list(doc.paragraphs[11:]):
     p._p.getparent().remove(p._p)
 
@@ -206,14 +205,6 @@ def add_field(p, instr, placeholder=""):
 add_field(footer_p, " PAGE ", "1")
 
 # ---------- 目录 ----------
-from docx.enum.text import WD_BREAK
-
-def page_break():
-    p = doc.add_paragraph()
-    p.add_run().add_break(WD_BREAK.PAGE)
-    return p
-
-page_break_removed = True
 toc_title = doc.add_paragraph()
 toc_title.paragraph_format.page_break_before = True
 toc_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
